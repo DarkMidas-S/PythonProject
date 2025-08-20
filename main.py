@@ -1,3 +1,8 @@
+#  Завдання 1
+# Створіть клас Student з атрибутами name та age. Додайте
+# метод для виводу інформації у форматі «Ім’я: {name}, вік:
+# {age}»
+
 class Student:
     def __init__(self, name, age, yaer):
         self.name = name
@@ -19,7 +24,11 @@ student2.info()
 student3 = Student( name=  "Elizaveta", age= 18, yaer= 1)
 student3.info()
 
-student_list = []
+# Завдання 2
+# Створіть список з 3-ма студентами, дані вводить
+# користувач. Після чого для кожного студента виведіть
+# інформацію про нього за допомогою метода.
+# student_list = []
 
 for i in range(3):
     print()

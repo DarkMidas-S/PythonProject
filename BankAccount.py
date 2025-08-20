@@ -1,3 +1,9 @@
+# Завдання 4
+# Створіть клас BankAccount з атрибутами owner та balance.
+# Додайте метод deposit для поповнення рахунку
+# Додайте метод withdraw для зняття грошей з рахунку
+# Додайте метод info для виведення інформації про баланс
+
 class BankAccount:
     def __init__(self, owner, balance):
         self.owner = owner
