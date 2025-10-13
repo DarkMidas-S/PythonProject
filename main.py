@@ -1,90 +1,66 @@
-# Завдання 1
-# Напишіть клас Банківський рахунок з атрибутами:
-#  ім'я клієнта
-#  баланс
-#  валюта
-#  словник з курсом валют(однаковий для всіх)
-# Додайте методи:
-#  вивід загальної інформації
-#  перевірка чи відома валюта(якщо ні, викликати
-# ValueError)
-#  перевести гроші з однієї валюти в іншу(ця операція
-# часто використовується, тому зрочно реалізувати
-# окремим методом)
-#  зміна валюти
-#  поповнення балансу(валюта та сама)
-#  зняття грошей з балансу(валюта та сама).
+#  Завдання 1
+# Створіть наступні класи:
+#  CreditCardPayment – атрибути currency
+#  PayPalPayment – атрибути currency
+#  CryptoPayment – атрибути currency
+# Методи:
+#  pay(amount) – виводить повідомлення
+# o CreditCardPayment – оплата карткою {amount}{currency}
+# o PayPalPayment – оплата PayPal {amount}{currency}
+# o CryptoPayment – оплата криптогаманцем {amount}{currency}
+# Напишіть функцію create_payment() яка запитує у
+# користувача тип рахунку та потрібні атрибути і повертає
+# об’єкт.
+# Створіть декілька рахунків, добавте їх у список та для
+# кожної викличте відповідні методи.
 
-class BankAccount:
-    currency_rates = {
-        "UAH": 1.0,
-        "USD": 39.5,
-        "EUR": 42.8,
-        "GBP": 49.2,
-        "PLN": 10.0
-    }
+from abc import ABC, abstractmethod
 
-    def __init__(self, name, currency, balance=0.0):
-        self.name = name
-        self.check_currency(currency)
-        if balance < 0:
-            raise ValueError("Начальный баланс не может быть отрицательным.")
+class Payment(ABC):
+    def __init__(self, currency):
         self.currency = currency
-        self.balance = float(balance)
 
-    def __str__(self):
-        return f"Клиент: {self.name} | Баланс: {self.balance:.2f} {self.currency}"
+    @abstractmethod
+    def pay(self,amount):
+        pass
 
-    def info(self):
-        print("******************************************************")
+class CheckPay()
 
-        print(f"Клиент: {self.name}")
-        print(f"Баланс: {self.balance:.2f} {self.currency}")
-        print(f"Курсы валют: {self.__class__.currency_rates}")
-        print("******************************************************")
-        print()
+class CreditCardPayment(Payment):
+    def pay(self, amount):
+        print(f"Оплата картой: {amount} {self.currency}")
 
-    def check_currency(self, currency):
-        if currency not in self.__class__.currency_rates:
-            raise ValueError(f"Валюта '{currency}' не поддерживается.")
-        return True
+class PayPalPayment(Payment):
+    def pay(self, amount):
+        print(f"Оплата через PayPal: {amount} {self.currency}")
 
-    def convert(self, amount, from_currency, to_currency, ndigits=2):
-        self.check_currency(from_currency)
-        self.check_currency(to_currency)
-        if amount < 0:
-            raise ValueError("Сумма не может быть отрицательной.")
-        uah = amount * BankAccount.currency_rates[from_currency]
-        result = uah / BankAccount.currency_rates[to_currency]
-        return round(result, ndigits)
+class CryptoPayment(Payment):
+    def pay(self, amount):
+        print(f"Оплата криптокошельком: {amount} {self.currency}")
 
-    def change_currency(self, new_currency):
-        self.check_currency(new_currency)
-        if new_currency == self.currency:
-            print("Валюта уже установлена.")
-            return
-        self.balance = self.convert(self.balance, self.currency, new_currency)
-        self.currency = new_currency
-        print(f"Валюта счёта изменена. Новый баланс: {self.balance:.2f} {self.currency};")
+def create_payment():
+    print("Доступные методы оплаты: card / paypal / crypto")
+    pay_typ = input("Выберите тип оплаты: ").lower()
+    currency = input("Введите валюту (например, USD, EUR, BTC): ")
 
-    def deposit(self, amount):
-        if amount <= 0:
-            raise ValueError("Сумма пополнения должна быть положительной.")
-        self.balance += amount
-        print(f"Счёт пополнен на {amount:.2f} {self.currency}. Баланс: {self.balance:.2f} {self.currency};")
+    if pay_typ == "card":
+        return CreditCardPayment(currency)
+    elif pay_typ == "paypal":
+        return PayPalPayment(currency)
+    elif pay_typ == "crypto":
+        return CryptoPayment(currency)
+    else:
+        print("Неверный тип оплаты!")
+        return None
 
-    def withdraw(self, amount):
-        if amount <= 0:
-            raise ValueError("Сумма снятия должна быть положительной.")
-        if amount > self.balance:
-            raise ValueError("Недостаточно средств на счёте.")
-        self.balance -= amount
-        print(f"Снято {amount:.2f} {self.currency}. Баланс: {self.balance:.2f} {self.currency};")
+# --- тест ---
+payments = []
 
-acc = BankAccount("Иван", "USD", 100)
-acc.info()
-acc.deposit(50)
-acc.withdraw(30)
-print("50 USD в EUR =", acc.convert(50, "USD", "EUR"))
-acc.change_currency("EUR")
-print(acc)
+for i in range(3):
+    p = create_payment()
+    if p:
+        payments.append(p)
+
+for payment in payments:
+    amount = float(input("Введите сумму: "))
+    payment.pay(amount)
