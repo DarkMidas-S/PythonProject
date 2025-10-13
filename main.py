@@ -24,7 +24,6 @@ class Payment(ABC):
     def pay(self,amount):
         pass
 
-class CheckPay()
 
 class CreditCardPayment(Payment):
     def pay(self, amount):
