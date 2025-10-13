@@ -1,71 +1,60 @@
-#  Завдання 1
-# Створіть клас Cart(кошик клієнта магазину) з атрибутами
-# client(ім’я клієнта) та items(список товарів).
-# Додайте метод який додає новий товар до кошика
-# Додайте метод який видаляє товар з кошика
-# Додайте метод для виведення інформації про кошик
+# Завдання 1
+# Є текстовий файл. Запишіть в інший файл таку
+# статистику:
+#  Кількість символів
+#  Кількість рядків
+#  Кількість цифр
+#  Кількість голосних літер(aeuio)
 
-class Cart:
-    def __init__(self, client, items = None):
-        self.client = client
-        if items is None:
-            self.items = []
-        else:
-            self.items = list(items)
+def file_stats(input_file, output_file):
+    with open(input_file, "r", encoding="utf-8") as f:
+        text = f.read()
 
-    def add_item(self, item):
-        self.items.append(item)
+    kilkist_simvoliv = len(text)
+    kilkist_ryadkiv = text.count("\n") + 1 if text else 0
+    kilkist_cyfr = sum(ch.isdigit() for ch in text)
+    kilkist_golosnyh = sum(ch.lower() in "aeuio" for ch in text)
 
-    def delet_item(self, item):
-        self.items.remove(item)
+    with open(output_file, "w", encoding="utf-8") as f:
+        f.write(f"Кількість символів: {kilkist_simvoliv}\n")
+        f.write(f"Кількість рядків: {kilkist_ryadkiv}\n")
+        f.write(f"Кількість цифр: {kilkist_cyfr}\n")
+        f.write(f"Кількість голосних літер: {kilkist_golosnyh}\n")
 
-    def info_cart(self):
-        print(f"\nКлиент: {self.client}")
-        print()
-        print(f"Корзина:")
-        print()
-        for i in self.items:
-            print(i)
-            print("**************")
-
-products = ["Молоко", "Яйца", "Хлеб"]
-client1 = Cart("David", products)
-client1.info_cart()
-
-client1.add_item("Сода")
-client1.info_cart()
-
-client1.delet_item("Молоко")
-client1.info_cart()
 
 # Завдання 2
-# Створіть клас Phone з атрибутами number та battery_level.
-# Додайте метод який зменшує заряд телефона(на скільки
-# зменшити відсотків передається як параметр), якщо він
-# опуститься нижче 20%, вивести повідомлення
-# Додайте метод для виведення інформації про телефон.
+# Користувач вводить слово та назву файлу. Виведіть
+# кількість цього слова у файлі.
 
-class Phone:
-    def __init__(self, number, battery_level = 100):
-        self.number = number
-        self.battery_level = battery_level
+def count_word_in_file(word, filename):
+    with open(filename, "r", encoding="utf-8") as f:
+        text = f.read().lower()
+    return text.split().count(word.lower())
 
-    def percent(self, percent):
-        self.battery_level -= percent
-        if self.battery_level < 20:
-            print(f"У вашего телефона {self.battery_level} %. Перейдите в режим энергосбережения!")
-        elif self.battery_level == 0:
-            print("Ваш телефон полностью разряжен!")
 
-    def info(self):
-        print(f"Номер телефона: {self.number}")
-        print(f"Уровень зарядки: {self.battery_level} %\n")
+# Завдання 3
+# Є текстовий файл. Видаліть з нього останній рядок.
 
-my_phone = Phone("+34 777 888 111")
-my_phone.info()
+def delete_last_line(filename):
+    with open(filename, "r", encoding="utf-8") as f:
+        lines = f.readlines()
+    if lines:
+        lines = lines[:-1]
+    with open(filename, "w", encoding="utf-8") as f:
+        f.writelines(lines)
 
-my_phone.percent(15)
-my_phone.info()
 
-my_phone.percent(70)
-my_phone.info()
+# Виконання завдань
+if __name__ == "__main__":
+    # Завдання 1
+    file_stats("input.txt", "stats.txt")
+    print("Статистика збережена у stats.txt")
+
+    # Завдання 2
+    word = input("Введіть слово: ")
+    filename = input("Введіть назву файлу: ")
+    print("Кількість слова у файлі:", count_word_in_file(word, filename))
+
+    # Завдання 3
+    delete_last_line("input.txt")
+    print("Останній рядок видалено з input.txt")
