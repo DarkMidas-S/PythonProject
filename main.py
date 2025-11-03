@@ -1,62 +1,104 @@
-#
 #  Завдання 1
-# Створіть клас Recipe з атрибутами
-#  name – назва страви
-#  ingredients – список продуктів
-#  text – текст рецепту
-#  time – час приготування
-# методи:
-#  __str__(self) – повертає назву страви
-#  __contains__(self, item)  – перевіряє чи є інгредієнт в
-# рецепті
-#  __gt__(self, other)  – перевіряє чи є час приготування self
-# більшим за other
-#  display_info(self) – виводить всю інформацію про рецепт
-# Створіть декілька рецептів та добавте їх у список.
-# Виведіть назви тих рецептів, які містять інгредієнт томат
-# Виведіть повну інформацію рецепта з найменшим часом
-# приготування, скористайтесь функцією min
+# Створіть клас Pet з атрибутами
+#  name – ім’я тварини
+#  satiety – рівень ситості(від 0 до 100, за замовчуванням 50)
+#  energy – рівень енергії (від 0 до 100, за замовчуванням 50)
+# Методи:
+#  sleep() – збільшує energy до 100
+#  eat(food_amont) – їсть, збільшує satiety на food_amount
+#  play(activity_level) – абстрактний метод
+#  make_sound() – просто pass
+# Створіть клас Cat
+# Методи:
+#  play(activity_level) – якщо satiety > 60, зменшує energy на
+# 2*acticity_level та satiety на acticity_level
+#  make_sound() – виводить ‘Мяу’
+#  catch_mouse() – якщо  energy > 30, ловить мишу. Якщо
+# satiety > 40, то грається з мишею, інакше їсть
+# Створіть клас Dog
+# Методи:
+#  play(activity_level) – якщо satiety > 15, зменшує energy на
+# acticity_level//2 та satiety на acticity_level//2
+#  make_sound() – виводить ‘Гав’
+#  fetch_ball() – ловить м’яча якщо satiety>10, зменшує
+# energy на 5
+from abc import ABC, abstractmethod
 
-class Recipe:
-    def __init__(self, name, ingredients, text, time):
+class Pet(ABC):
+    def __init__(self, name, satiety=50, energy=50):
         self.name = name
-        self.ingredients = ingredients
-        self.text = text
-        self.time = time
-    def __str__(self):
-        return  self.name
+        self.satiety = satiety
+        self.energy = energy
 
-    def __contains__(self, item):
-        return item.lower() in [x.lower() for x in self.ingredients]
+    def sleep(self):
+        self.energy = 100
+        print(f"{self.name} поспал(-а) и полностью восстановил(-а) энергию!")
 
-    def __gt__(self, other):
-        return self.time > other.time
+    def eat(self, food_amount):
+        self.satiety = min(100, self.satiety + food_amount)
+        print(f"{self.name} поел(-а). Сытость: {self.satiety}/100")
 
-    def display_info(self):
-        print("***********************************")
-        print(f"Блюдо: {self.name}")
-        print(f"Ингредиенты: {', '.join(self.ingredients)}")
-        print(f"Описание: {self.text}")
-        print(f"Время приготовления: {self.time} мин.")
-        print("***********************************\n")
+    @abstractmethod
+    def play(self, activity_level):
+        pass
 
-recipes = [
-    Recipe("Пицца", ["мука", "вода", "дрожжи", "томат", "сыр"],
-           "Готовим тесто, добавляем ингридиенты и готовим", 30),
+    def make_sound(self):
+        pass
 
-    Recipe("Салат", ["томат", "огурец", "зелень", "олия"],
-           "Нарезаем овощи, добавляем зелень и поливаем олией", 10),
+class Cat(Pet):
+    def play(self, activity_level):
+        if self.satiety > 60:
+            self.energy = max(0, self.energy - 2 * activity_level)
+            self.satiety = max(0, self.satiety - 2 * activity_level)
+            print(f"{self.name} активно играет! Энергия: {self.energy}, Сытость: {self.satiety}")
+        else:
+            print(f"{self.name} слишком голоден, чтобы играть!")
 
-    Recipe("Суп", ["вода", "картошка", "морковь", "мясо"],
-           "Варим все ингридиенты до готовности", 45)
-]
-print("Рецепты с томатом: ")
-for recipe in recipes:
-    if "томат" in recipe:
-        print(recipe)
-print()
+    def make_sound(self):
+        print("Мяу!")
 
-min_recipe = min(recipes, key= lambda r: r.time)
+    def catch_mouse(self):
+        if self.energy > 30:
+            print(f"{self.name} поймал(-а) мышь!")
+            if self.satiety > 40:
+                print(f"{self.name} играет с мышью.")
+                self.energy = max(0, self.energy - 10)
+            else:
+                print(f"{self.name} съел(-а) мышь.")
+                self.eat(20)
+        else:
+            print(f"{self.name} слишком устал(-а), чтобы ловить мышь.")
 
-print("Рецепт с наименьшим временем приготовления:")
-min_recipe.display_info()
+class Dog(Pet):
+    def play(self, activity_level):
+        if self.satiety > 15:
+            self.energy = max(0, self.energy - activity_level // 2)
+            self.satiety = max(0, self.satiety - activity_level // 2)
+            print(f"{self.name} играет! Энергия: {self.energy}, Сытость: {self.satiety}")
+        else:
+            print(f"{self.name} слишком голоден, чтобы играть!")
+
+    def make_sound(self):
+        print("Гав!")
+
+    def fetch_ball(self):
+        if self.satiety > 10:
+            print(f"{self.name} принес(-ла) мяч!")
+            self.energy = max(0, self.energy - 5)
+        else:
+            print(f"{self.name} слишком голоден, чтобы играть с мячом!")
+
+cat = Cat("Мурка")
+dog = Dog("Бім")
+
+cat.make_sound()
+dog.make_sound()
+
+cat.play(10)
+cat.catch_mouse()
+cat.sleep()
+
+dog.play(8)
+dog.fetch_ball()
+dog.eat(20)
+dog.play(5)
